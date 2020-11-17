@@ -1,0 +1,36 @@
+version: '3.5'
+services:
+  server:
+    build: ./server
+    volumes:
+      - ./server:/var/www/app
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    command:
+      sh -c 'yarn start:dev'
+    networks:
+      - internal
+  database:
+    image: mysql:5.6
+    ports:
+        - "33061:3306"
+    command: --init-file /data/application/init.sql
+    volumes:
+        - ./db/init.sql:/data/application/init.sql
+    environment:
+        MYSQL_ROOT_USER: root
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: coffee_shop
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+    networks:
+      - internal
+  
+networks:
+  internal:
+    driver: bridge
