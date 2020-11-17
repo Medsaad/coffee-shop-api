@@ -24,7 +24,7 @@ export default class PodsController extends BaseController implements IControlle
    * @apiName Coffee Shop
    * @ApiDescription Populates pods table with initial data
    */
-  async initPods(req: Request, res: Response) {
+  async initPods(_: Request, res: Response) {
     const populated = await populatePods();
 
     const msg = populated? 'Done Successfully' : 'Data already exists';
@@ -48,18 +48,17 @@ export default class PodsController extends BaseController implements IControlle
     try{
       //validate filters
       await podSchema.validate(filters);
-  
+      const castedFilters: FILTERS = await podSchema.cast(filters) as any;
+      
       //query data
-      const data: POD[] = await listPods(filters);
+      const data: POD[] = await listPods(castedFilters);
 
       return res.status(200).json(data);
     }catch(err){
-      //format errors
-      const errors = err.errors.join('\n');
-
+      console.log(err);
       return res
       .status(400)
-      .json(super.sendResponse('FAILED', errors));
+      .json(super.sendResponse('FAILED', err.name, err.errors));
     }
 
   }

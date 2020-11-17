@@ -1,7 +1,5 @@
 import express from 'express';
 import BaseController from './BaseController';
-import swaggerUi from 'swagger-ui-express';
-import { swaggerDocument } from '../swagger';
 import { IController } from './IController.interface';
 
 export default class DefaultController extends BaseController implements IController {
@@ -15,7 +13,6 @@ export default class DefaultController extends BaseController implements IContro
   init() {
     this.server.get('/', this.homeAction);
     this.server.get('/api', this.homeAction);
-    this.server.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     //handle undefined routes
     this.server.use((_: any, res: express.Response) => {
       res

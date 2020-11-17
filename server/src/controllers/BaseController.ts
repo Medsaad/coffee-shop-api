@@ -17,7 +17,7 @@ export default class BaseController {
 
   sendResponse(code: string, message: string, errors?: any[]) {
     if (errors) {
-      return { code, errors };
+      return { code, message, errors };
     } else {
       return { code, message };
     }

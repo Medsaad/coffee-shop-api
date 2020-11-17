@@ -1,6 +1,6 @@
 import { pods } from '../seed/pods';
 import { FILTERS } from '../types';
-import { conn } from './mysql';
+import { conn } from '.';
 
 export const populatePods = async () => {
   const data = await conn.query('SELECT * FROM `coffee_pod` limit 1');
@@ -26,7 +26,7 @@ export const listPods = async (filters: FILTERS) => {
   let sql = `SELECT * FROM coffee_pod`;
 
   if(fields.length > 0){
-    sql = `${sql} WHERE ${fields.join(', ')}`
+    sql = `${sql} WHERE ${fields.join(' AND ')}`
   }
 
   const res = await conn.query(sql, values);
