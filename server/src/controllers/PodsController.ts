@@ -1,12 +1,12 @@
-import express from 'express';
-import { conn } from '../services/mysql';
-import { getGithubData } from '../services/request';
-import { GHRepo, GHUser } from '../types';
+import { Application, Request, Response } from 'express';
+import { listPods, populatePods } from '../services/pods';
 import BaseController from './BaseController';
 import { IController } from './IController.interface';
+import { FILTERS, POD } from '../types';
+import { podSchema } from '../validators/validationSchema';
 
-export default class GithubController extends BaseController implements IController {
-  constructor(server: express.Application) {
+export default class PodsController extends BaseController implements IController {
+  constructor(server: Application) {
     super(server);
   }
 
@@ -15,35 +15,52 @@ export default class GithubController extends BaseController implements IControl
    */
   init() {
     this.server.get('/api/pods', this.getPods);
-    this.server.get('/api/machines', this.getMachines);
+    this.server.get('/api/pods/init', this.initPods);
   }
 
   /**
-   * @api {get} /api/search Seach Github
+   * @api {get} /api/pods/init 
    * @apiVersion 1.0.0
-   * @apiName Github Searcher
-   * @ApiDescription Takes a type and search string and returns repos or users that matches that search
+   * @apiName Coffee Shop
+   * @ApiDescription Populates pods table with initial data
    */
-  async getPods(req: express.Request, res: express.Response) {
-    const data = await conn.query('SELECT * FROM `coffee_pod` limit 10');
+  async initPods(req: Request, res: Response) {
+    const populated = await populatePods();
 
-    // return res
-    //   .status(200)
-    //   .json(super.sendResponse('SUCCESS', ''));
-
-    return res.status(200).json(data);
-  }
-
-  /**
-   * @api {get} /api/clear-cache Clear Cache
-   * @apiVersion 1.0.0
-   * @apiName Github Searcher
-   * @ApiDescription This path clears redis cache
-   */
-  async getMachines(_: express.Request, res: express.Response) {
-
+    const msg = populated? 'Done Successfully' : 'Data already exists';
+    const status = populated? 'SUCCESS' : 'FAILED';
+    
     return res
       .status(200)
-      .json(super.sendResponse('SUCCESS', ''));
+      .json(super.sendResponse(status, msg));
+  }
+
+  /**
+   * @api {get} /api/pods Return list of pods with applied filters
+   * @apiVersion 1.0.0
+   * @apiName Coffee Shop
+   * @ApiDescription Returns the list of pods with with filters
+   */
+  async getPods(req: Request, res: Response) {
+    //extract filters
+    const filters: FILTERS = req.query as any;
+
+    try{
+      //validate filters
+      await podSchema.validate(filters);
+  
+      //query data
+      const data: POD[] = await listPods(filters);
+
+      return res.status(200).json(data);
+    }catch(err){
+      //format errors
+      const errors = err.errors.join('\n');
+
+      return res
+      .status(400)
+      .json(super.sendResponse('FAILED', errors));
+    }
+
   }
 }

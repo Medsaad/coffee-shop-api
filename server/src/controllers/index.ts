@@ -1,6 +1,6 @@
 import express from 'express';
 import DefaultController from './DefaultController';
-import GithubController from './PodsController';
+import PodsController from './PodsController';
 
 export default class AppContainer {
   /**
@@ -8,7 +8,7 @@ export default class AppContainer {
    * @param {Object} server
    */
   init(server: express.Application): express.Application {
-    new GithubController(server).init();
+    new PodsController(server).init();
     new DefaultController(server).init();
 
     return server;

@@ -11,4 +11,4 @@ GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELEC
 -- create tables
 USE coffee_shop;
 CREATE TABLE IF NOT EXISTS coffee_machine (id int NOT NULL AUTO_INCREMENT, sku varchar(6) NOT NULL, product_type varchar(25) NOT NULL, water_line_compatible tinyint NOT NULL, PRIMARY KEY (id));
-CREATE TABLE IF NOT EXISTS coffee_pod (id int NOT NULL AUTO_INCREMENT, sku varchar(6) NOT NULL, coffee_flavor tinyint NOT NULL, pack_size int NOT NULL, PRIMARY KEY (id));
+CREATE TABLE IF NOT EXISTS coffee_pod (id int NOT NULL AUTO_INCREMENT, sku varchar(6) NOT NULL, product_type varchar(25) NOT NULL, coffee_flavor varchar(50) NOT NULL, pack_size int NOT NULL, PRIMARY KEY (id));
