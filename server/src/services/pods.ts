@@ -5,15 +5,18 @@ import { conn } from '.';
 export const populatePods = async () => {
   const data = await conn.query('SELECT * FROM `coffee_pod` limit 1');
   const rows = data[0] as any[];
-  if(rows.length > 0){
+  if (rows.length > 0) {
     return false;
   }
 
-  for(const pod of pods){
-    await conn.query(`
+  for (const pod of pods) {
+    await conn.query(
+      `
     INSERT INTO coffee_pod (sku, product_type, coffee_flavor, pack_size) VALUES 
     (?, ?, ?, ?)
-    `, [pod.sku, pod.product_type, pod.coffee_flavor, pod.pack_size]);
+    `,
+      [pod.sku, pod.product_type, pod.coffee_flavor, pod.pack_size],
+    );
   }
 
   return true;
@@ -25,11 +28,11 @@ export const listPods = async (filters: FILTERS) => {
 
   let sql = `SELECT * FROM coffee_pod`;
 
-  if(fields.length > 0){
-    sql = `${sql} WHERE ${fields.join(' AND ')}`
+  if (fields.length > 0) {
+    sql = `${sql} WHERE ${fields.join(' AND ')}`;
   }
 
   const res = await conn.query(sql, values);
 
   return res[0] as any;
-}
+};

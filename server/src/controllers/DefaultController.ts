@@ -2,7 +2,9 @@ import express from 'express';
 import BaseController from './BaseController';
 import { IController } from './IController.interface';
 
-export default class DefaultController extends BaseController implements IController {
+export default class DefaultController
+  extends BaseController
+  implements IController {
   constructor(server: express.Application) {
     super(server);
   }

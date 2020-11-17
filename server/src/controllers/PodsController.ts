@@ -5,7 +5,9 @@ import { IController } from './IController.interface';
 import { FILTERS, POD } from '../types';
 import { podSchema } from '../validators/validationSchema';
 
-export default class PodsController extends BaseController implements IController {
+export default class PodsController
+  extends BaseController
+  implements IController {
   constructor(server: Application) {
     super(server);
   }
@@ -19,7 +21,7 @@ export default class PodsController extends BaseController implements IControlle
   }
 
   /**
-   * @api {get} /api/pods/init 
+   * @api {get} /api/pods/init
    * @apiVersion 1.0.0
    * @apiName Coffee Shop
    * @ApiDescription Populates pods table with initial data
@@ -27,12 +29,10 @@ export default class PodsController extends BaseController implements IControlle
   async initPods(_: Request, res: Response) {
     const populated = await populatePods();
 
-    const msg = populated? 'Done Successfully' : 'Data already exists';
-    const status = populated? 'SUCCESS' : 'FAILED';
-    
-    return res
-      .status(200)
-      .json(super.sendResponse(status, msg));
+    const msg = populated ? 'Done Successfully' : 'Data already exists';
+    const status = populated ? 'SUCCESS' : 'FAILED';
+
+    return res.status(200).json(super.sendResponse(status, msg));
   }
 
   /**
@@ -45,21 +45,20 @@ export default class PodsController extends BaseController implements IControlle
     //extract filters
     const filters: FILTERS = req.query as any;
 
-    try{
+    try {
       //validate filters
       await podSchema.validate(filters);
-      const castedFilters: FILTERS = await podSchema.cast(filters) as any;
-      
+      const castedFilters: FILTERS = (await podSchema.cast(filters)) as any;
+
       //query data
       const data: POD[] = await listPods(castedFilters);
       const sku = data.map((item) => item.sku);
 
       return res.status(200).json(sku);
-    }catch(err){
+    } catch (err) {
       return res
-      .status(400)
-      .json(super.sendResponse('FAILED', err.name, err.errors));
+        .status(400)
+        .json(super.sendResponse('FAILED', err.name, err.errors));
     }
-
   }
 }

@@ -5,7 +5,9 @@ import { IController } from './IController.interface';
 import { FILTERS, MACHINE } from '../types';
 import { machineSchema } from '../validators/validationSchema';
 
-export default class MachinesController extends BaseController implements IController {
+export default class MachinesController
+  extends BaseController
+  implements IController {
   constructor(server: Application) {
     super(server);
   }
@@ -19,7 +21,7 @@ export default class MachinesController extends BaseController implements IContr
   }
 
   /**
-   * @api {get} /api/machines/init 
+   * @api {get} /api/machines/init
    * @apiVersion 1.0.0
    * @apiName Coffee Shop
    * @ApiDescription Populates machines table with initial data
@@ -27,12 +29,10 @@ export default class MachinesController extends BaseController implements IContr
   async initMachines(_: Request, res: Response) {
     const populated = await populateMachines();
 
-    const msg = populated? 'Done Successfully' : 'Data already exists';
-    const status = populated? 'SUCCESS' : 'FAILED';
-    
-    return res
-      .status(200)
-      .json(super.sendResponse(status, msg));
+    const msg = populated ? 'Done Successfully' : 'Data already exists';
+    const status = populated ? 'SUCCESS' : 'FAILED';
+
+    return res.status(200).json(super.sendResponse(status, msg));
   }
 
   /**
@@ -45,21 +45,20 @@ export default class MachinesController extends BaseController implements IContr
     //extract filters
     const filters: FILTERS = req.query as any;
 
-    try{
+    try {
       //validate filters
       await machineSchema.validate(filters);
-      const castedFilters: FILTERS = await machineSchema.cast(filters) as any;
-  
+      const castedFilters: FILTERS = (await machineSchema.cast(filters)) as any;
+
       //query data
       const data: MACHINE[] = await listMachines(castedFilters);
       const sku = data.map((item) => item.sku);
 
       return res.status(200).json(sku);
-    }catch(err){
+    } catch (err) {
       return res
-      .status(400)
-      .json(super.sendResponse('FAILED', err.name, err.errors));
+        .status(400)
+        .json(super.sendResponse('FAILED', err.name, err.errors));
     }
-
   }
 }

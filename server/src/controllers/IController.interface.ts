@@ -1,5 +1,5 @@
 import express from 'express';
 
 export interface IController {
-    init(server: express.Application): void
+  init(server: express.Application): void;
 }

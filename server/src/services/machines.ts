@@ -5,31 +5,34 @@ import { conn } from '.';
 export const populateMachines = async () => {
   const data = await conn.query('SELECT * FROM `coffee_machine` limit 1');
   const rows = data[0] as any[];
-  if(rows.length > 0){
+  if (rows.length > 0) {
     return false;
   }
 
-  for(const machine of machines){
-    await conn.query(`
+  for (const machine of machines) {
+    await conn.query(
+      `
     INSERT INTO coffee_machine (sku, product_type, water_line_compatible) VALUES 
     (?, ?, ?)
-    `, [machine.sku, machine.product_type, machine.water_line_compatible]);
+    `,
+      [machine.sku, machine.product_type, machine.water_line_compatible],
+    );
   }
 
   return true;
 };
 
 export const listMachines = async (filters: FILTERS) => {
-    const fields = Object.keys(filters).map((field: string) => ` ${field}=? `);
-    const values = Object.values(filters);
-  
-    let sql = `SELECT * FROM coffee_machine`;
+  const fields = Object.keys(filters).map((field: string) => ` ${field}=? `);
+  const values = Object.values(filters);
 
-    if(fields.length > 0){
-      sql = `${sql} WHERE ${fields.join(' AND ')}`
-    }
+  let sql = `SELECT * FROM coffee_machine`;
 
-    const res = await conn.query(sql, values);
+  if (fields.length > 0) {
+    sql = `${sql} WHERE ${fields.join(' AND ')}`;
+  }
 
-    return res[0] as any;
-}
+  const res = await conn.query(sql, values);
+
+  return res[0] as any;
+};
