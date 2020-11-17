@@ -52,8 +52,9 @@ export default class PodsController extends BaseController implements IControlle
       
       //query data
       const data: POD[] = await listPods(castedFilters);
+      const sku = data.map((item) => item.sku);
 
-      return res.status(200).json(data);
+      return res.status(200).json(sku);
     }catch(err){
       console.log(err);
       return res

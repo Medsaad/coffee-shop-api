@@ -12,7 +12,7 @@ export const podSchema = yup.object<FILTERS>().shape({
     }
     
     const allowedFilters = ['product_type', 'coffee_flavor', 'pack_size'];
-   return allowedFilters.some(f => filterKeys.includes(f));
+   return allowedFilters.every(f => filterKeys.includes(f));
 });
 
 export const machineSchema = yup.object<FILTERS>().shape({
@@ -25,5 +25,5 @@ export const machineSchema = yup.object<FILTERS>().shape({
     }
 
     const allowedFilters = ['product_type', 'water_line_compatible'];
-   return allowedFilters.some(f => filterKeys.includes(f));
+   return allowedFilters.every(f => filterKeys.includes(f));
 });

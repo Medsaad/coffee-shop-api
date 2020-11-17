@@ -52,8 +52,9 @@ export default class MachinesController extends BaseController implements IContr
   
       //query data
       const data: MACHINE[] = await listMachines(castedFilters);
+      const sku = data.map((item) => item.sku);
 
-      return res.status(200).json(data);
+      return res.status(200).json(sku);
     }catch(err){
       return res
       .status(400)
